@@ -1,18 +1,19 @@
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose")
+const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const PORT = process.env.PORT || 4000;
 
-const AuthRoutes = require('./routes/AuthRoutes')
+const AuthRoutes = require("./routes/AuthRoutes");
 
 const app = express();
 
-app.use(express.json())
-
+app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
@@ -20,16 +21,14 @@ app.use(
   })
 );
 
-app.use(AuthRoutes)
-
-
+app.use(AuthRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
   if (error.httpStatusCode === 422) {
     res.json({ Error: "Server error 422" });
   }
-    res.json({ Error: "Server error 500" });
+  res.json({ Error: "Server error 500" });
 });
 
 mongoose

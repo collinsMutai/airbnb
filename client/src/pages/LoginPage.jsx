@@ -17,7 +17,10 @@ const LoginPage = () => {
         email,
         password,
       });
-      setUser(data);
+      setUser(data.user['name']);
+     
+      localStorage.setItem("user info", data.user['name'])
+      localStorage.setItem("email", data.user['email'])
       alert("login successful");
       setRedirect(true);
     } catch (error) {

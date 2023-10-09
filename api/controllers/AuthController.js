@@ -42,10 +42,11 @@ exports.login = async (req, res, next) => {
         process.env.JWT_KEY,
         { expiresIn: "1h" }
       );
+
       return res
         .cookie("token", token)
         .status(200)
-        .json({ message: "User login successful!", user: user });
+        .json({ message: "User login successful!", user: user, token: token });
     }
     return res.status(422).json({ message: "User login failed. Try again!" });
   } catch (err) {
