@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/UserModel");
 
+
 exports.test = (req, res, next) => {
   res.json("test ok");
 };
@@ -53,3 +54,5 @@ exports.login = async (req, res, next) => {
     res.status(422).json({ message: "User login failed. Try again!" });
   }
 };
+
+
