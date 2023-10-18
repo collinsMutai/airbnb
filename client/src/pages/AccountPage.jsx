@@ -6,6 +6,7 @@ import PlacesPage from "./PlacesPage";
 const AccountPage = () => {
   const [redirect, setRedirect] = useState(false);
   const { user, setUser } = useContext(UserContext);
+  console.log(user);
 
   if (!user) {
     return <Navigate to={"/"} />;
@@ -24,10 +25,10 @@ const AccountPage = () => {
     return classes;
   }
   const logout = () => {
-    let clear = localStorage.clear();
-    setRedirect(true);
+    // let clear = localStorage.clear();
+    // setRedirect(true);
     setUser(null);
-    return <Navigate to={"/"} />;
+    // return <Navigate to={"/"} />;
   };
   if (redirect) {
     return <Navigate to={"/"} />;

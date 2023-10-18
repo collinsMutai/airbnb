@@ -4,16 +4,17 @@ import { UserContext } from "./UserContext";
 
 const Header = () => {
  
-  const { user, setUser } = useContext(UserContext);
+  const { user,setUser } = useContext(UserContext);
+  console.log(user);
 
-  let userName = localStorage.getItem("user info");
-  setUser(userName)
+  // let userName = localStorage.getItem("user info");
+  // setUser(userName)
  
   
 
   return (
     <header className="flex justify-between">
-      <a href="/" className="flex items-center gap-1">
+      <Link to={'/'} className="flex items-center gap-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -29,7 +30,7 @@ const Header = () => {
           />
         </svg>
         <span className="font-bold text-xl">airbnb</span>
-      </a>
+      </Link>
       <div className="flex gap-2 border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-300">
         <div>Anywhere</div>
         <div className="border border-l border-gray-300"></div>
@@ -54,7 +55,7 @@ const Header = () => {
         </button>
       </div>
       <Link
-        to={userName ? "/account" : "/login"}
+        to={user ? "/account" : "/login"}
         className="flex items-center gap-2 border border-gray-300 rounded-full py-2 px-4"
       >
         <svg
@@ -86,7 +87,7 @@ const Header = () => {
           </svg>
         </div>
 
-        {!!userName && <div>{userName}</div>}
+        {!!user && <div>{user}</div>}
       </Link>
     </header>
   );

@@ -8,7 +8,8 @@ const LoginPage = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [redirect, setRedirect] = useState(false);
-  const { setUser } = useContext(UserContext);
+  const { user,setUser } = useContext(UserContext);
+  // console.log(user);
 
   async function loginUser(ev) {
     ev.preventDefault();
@@ -19,8 +20,8 @@ const LoginPage = () => {
       });
       setUser(data.user['name']);
      
-      localStorage.setItem("user info", data.user['name'])
-      localStorage.setItem("email", data.user['email'])
+      // localStorage.setItem("user info", data.user['name'])
+      // localStorage.setItem("email", data.user['email'])
       alert("login successful");
       setRedirect(true);
     } catch (error) {
