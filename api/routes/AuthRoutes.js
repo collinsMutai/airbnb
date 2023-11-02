@@ -11,4 +11,6 @@ router.post("/login", AuthController.login);
 
 router.get('/profile', AuthController.profile)
 
+router.post('/places', AuthController.places)
+
 module.exports = router;

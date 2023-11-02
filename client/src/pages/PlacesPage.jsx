@@ -1,20 +1,27 @@
-import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import Perks from "../Perks";
+import React, { useState, useContext } from "react";
 import axios from "axios";
+import { Link, Navigate, useParams } from "react-router-dom";
+import Perks from "../Perks";
+
+import PhotosUploader from "../PhotosUploader";
+
+import { UserContext } from "../UserContext";
+
+
 
 const PlacesPage = () => {
   const { action } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
-  const [addedPhotos, setAddedPhotos] = useState([]);
   const [photoLink, setPhotoLink] = useState("");
+  const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
   const [extraInfo, setExtraInfo] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+  const [redirect, setRedirect] = useState("");
 
   function inputHeader(text) {
     return <h2 className="text-2xl mt-4">{text}</h2>;
@@ -30,41 +37,47 @@ const PlacesPage = () => {
       </>
     );
   }
-
-  async function addPhotoByLink(ev) {
+  const { user, setUser} = useContext(UserContext);
+  console.log(user, 'places page');
+  async function addNewPlace(ev) {
     ev.preventDefault();
-    const { data: filename } = await axios.post("/upload-by-link", {
-      link: photoLink,
+    const { data } = await axios.post("/places", {
+      owner: user['_id'],
+      title,
+      address,
+      addedPhotos,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
     });
-
-    setAddedPhotos((prev) => {
-      return [...prev, filename];
-    });
+    setRedirect("/account/places");
   }
-  function uploadPhoto(ev) {
-    const files = ev.target.files;
-    // console.log(files);
-    const data = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      data.append("photos", files[i]);
-    }
 
-    axios
-      .post("/upload", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        // console.log(response);
-        const { data: filenames } = response;
-        setAddedPhotos((prev) => {
-          return [...prev, ...filenames];
-        });
-      });
+  if (redirect) {
+    return <Navigate to={redirect} />;
   }
+ let { subpage } = useParams();
+ if (subpage === undefined) {
+   subpage = "profile";
+ }
+ function linkClasses(type = null) {
+   let classes = "inline-flex gap-1 py-2 px-6 rounded-full";
+   if (type === subpage) {
+     classes += " bg-primary text-white";
+   } else {
+     classes += "bg-gray-200";
+   }
+   return classes;
+ }
   return (
     <div>
       {action !== "new" && (
         <div className="text-center">
+          list of all added places
+          <br/>
           <Link
             className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
             to={"/account/places/new"}
@@ -88,132 +101,139 @@ const PlacesPage = () => {
         </div>
       )}
       {action === "new" && (
-        <div>
-          <form>
-            {preInput(
-              "Title",
-              "title for your place. should be short and catchy"
-            )}
-
-            <input
-              type="text"
-              placeholder="title, for exmple: My lovely apt"
-              value={title}
-              onChange={(ev) => setTitle(ev.target.value)}
-            />
-            {preInput("Address", "Address")}
-
-            <input
-              type="text"
-              placeholder="address"
-              value={address}
-              onChange={(ev) => setAddress(ev.target.value)}
-            />
-            {preInput("Photos", "more = better")}
-
-            <div className="flex gap-2">
+        <>
+          <nav className="w-full flex justify-center mt-8 gap-2 mb-12">
+            <Link className={linkClasses("profile")} to={"/account"}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                />
+              </svg>
+              My profile
+            </Link>
+            <Link className={linkClasses("bookings")} to={"/account/bookings"}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                />
+              </svg>
+              My booking
+            </Link>
+            <Link className={linkClasses("places")} to={"/account/places"}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819"
+                />
+              </svg>
+              My accomodations
+            </Link>
+          </nav>
+          <div>
+            <form onSubmit={addNewPlace}>
+              {preInput(
+                "Title",
+                "title for your place. should be short and catchy"
+              )}
               <input
                 type="text"
-                placeholder={"Add using a link .....jpg"}
-                value={photoLink}
-                onChange={(ev) => setPhotoLink(ev.target.value)}
+                placeholder="title, for exmple: My lovely apt"
+                value={title}
+                onChange={(ev) => setTitle(ev.target.value)}
               />
-              <button
-                onClick={addPhotoByLink}
-                className="by-gray-200 px-4 rounded-2xl"
-              >
-                Add&nbsp; photo
-              </button>
-            </div>
+              {preInput("Address", "Address")}
+              <input
+                type="text"
+                placeholder="address"
+                value={address}
+                onChange={(ev) => setAddress(ev.target.value)}
+              />
+              {preInput("Photos", "more = better")}
 
-            <div className="mt-2 gap-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {addedPhotos.length > 0 &&
-                addedPhotos.map((link) => (
-                  <div className="h-32 flex" key={link}>
-                    <img
-                      className="rounded-2xl w-full object-cover"
-                      src={"http://localhost:4000/uploads/" + link}
-                    />
-                  </div>
-                ))}
-              <label className="h-32 cursor-pointer flex items-center justify-center gap-1 border bg-transparent rounded-2xl  text-2xl text-gray-600">
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={uploadPhoto}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-8 h-8"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+              <PhotosUploader
+                setAddedPhotos={setAddedPhotos}
+                setPhotoLink={setPhotoLink}
+                photoLink={photoLink}
+                addedPhotos={addedPhotos}
+              />
+              {preInput("Description", "Description of the place")}
+              <textarea
+                value={description}
+                onChange={(ev) => setDescription(ev.target.value)}
+              />
+              {preInput("Perks", "Selct all the perks of your place")}
+              <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+                <Perks selected={perks} onChange={setPerks} />
+              </div>
+              {preInput("Extra info", "house rules, etc")}
+              <textarea
+                value={extraInfo}
+                onChange={(ev) => setExtraInfo(ev.target.value)}
+              />
+              {preInput(
+                "Check in & out times",
+                "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam!"
+              )}
+              <div className="grid gap-2 sm:grid-cols-3">
+                <div>
+                  <h3 className="mt-2 -mb-1">Check in time</h3>
+                  <input
+                    type="text"
+                    placeholder="14"
+                    value={checkIn}
+                    onChange={(ev) => setCheckIn(ev.target.value)}
                   />
-                </svg>
-                Upload
-              </label>
-            </div>
-            {preInput("Description", "Description of the place")}
-
-            <textarea
-              value={description}
-              onChange={(ev) => setDescription(ev.target.value)}
-            />
-            {preInput("Perks", "Selct all the perks of your place")}
-            <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-              <Perks selected={perks} onChange={setPerks} />
-            </div>
-            {preInput("Extra info", "house rules, etc")}
-
-            <textarea
-              value={extraInfo}
-              onChange={(ev) => setExtraInfo(ev.target.value)}
-            />
-            {preInput(
-              "Check in & out times",
-              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam!"
-            )}
-
-            <div className="grid gap-2 sm:grid-cols-3">
-              <div>
-                <h3 className="mt-2 -mb-1">Check in time</h3>
-                <input
-                  type="text"
-                  placeholder="14"
-                  value={checkIn}
-                  onChange={(ev) => setCheckIn(ev.target.value)}
-                />
+                </div>
+                <div>
+                  <h3 className="mt-2 -mb-1">Check out time</h3>
+                  <input
+                    type="text"
+                    placeholder="11"
+                    value={checkOut}
+                    onChange={(ev) => setCheckOut(ev.target.value)}
+                  />
+                </div>
+                <div>
+                  <h3 className="mt-2 -mb-1">Max number of guest</h3>
+                  <input
+                    type="text"
+                    value={maxGuests}
+                    onChange={(ev) => setMaxGuests(ev.target.value)}
+                  />
+                </div>
               </div>
-              <div>
-                <h3 className="mt-2 -mb-1">Check out time</h3>
-                <input
-                  type="text"
-                  placeholder="11"
-                  value={checkOut}
-                  onChange={(ev) => setCheckOut(ev.target.value)}
-                />
-              </div>
-              <div>
-                <h3 className="mt-2 -mb-1">Max number of guest</h3>
-                <input
-                  type="text"
-                  value={maxGuests}
-                  onChange={(ev) => setMaxGuests(ev.target.value)}
-                />
-              </div>
-            </div>
-            <button className="primary my-4">Save</button>
-          </form>
-        </div>
+              <button className="primary my-4">Save</button>
+            </form>
+          </div>
+        </>
       )}
-      my places
+      
     </div>
   );
 };

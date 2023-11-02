@@ -1,11 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/UserModel");
-
+const Place = require("../models/PlaceSchema");
 exports.test = (req, res, next) => {
   res.json("test ok");
 };
-
+let loggedUser = "";
 exports.register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -27,9 +27,11 @@ exports.register = async (req, res, next) => {
 let cookies = "";
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
+  console.log(email, password);
 
   try {
     const user = await User.findOne({ email: email });
+    loggedUser = user;
 
     if (!user) {
       return res.status(422).json({ message: "User login failed. Try again!" });
@@ -38,7 +40,7 @@ exports.login = async (req, res, next) => {
     const doMatch = await bcrypt.compare(password, user.password);
     if (doMatch) {
       const token = await jwt.sign(
-        { email: user.email, userId: user._id, name: user.name},
+        { email: user.email, userId: user._id, name: user.name },
         process.env.JWT_KEY
       );
       cookies = token;
@@ -66,4 +68,36 @@ exports.profile = (req, res, next) => {
     res.json(null);
   }
   res.cookie("token", cookies).json("cookies");
+};
+
+exports.places = async (req, res, next) => {
+  // console.log(req.body);
+  const {
+    owner,
+    title,
+    address,
+    addedPhotos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  const getUser = await User.findOne({_id: owner})
+  // console.log(getUser, 'found user');
+  const newPlace = new Place({
+    owner: getUser._id,
+    title,
+    address,
+    addedPhotos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  });
+  const placeDoc = await newPlace.save();
+  res.json(placeDoc);
 };

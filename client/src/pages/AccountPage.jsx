@@ -6,7 +6,7 @@ import PlacesPage from "./PlacesPage";
 const AccountPage = () => {
   const [redirect, setRedirect] = useState(false);
   const { user, setUser } = useContext(UserContext);
-  console.log(user);
+  // console.log(user);
 
   if (!user) {
     return <Navigate to={"/"} />;
@@ -90,8 +90,8 @@ const AccountPage = () => {
       </nav>
       {subpage === "profile" && (
         <div className="text-center max-w-lg mx-auto">
-          Logged in as {localStorage.getItem("user info")} (
-          {localStorage.getItem("email")})
+          Logged in as {user['name']} (
+          {user['email']})
           <button className="primary max-w-sm mt-2" onClick={logout}>
             Logout
           </button>

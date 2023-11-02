@@ -9,7 +9,10 @@ import UserContextProvider from "./UserContext";
 import AccountPage from "./pages/AccountPage";
 import PlacesPage from "./pages/PlacesPage";
 
-axios.defaults.baseURL = import.meta.env.VITE_baseURL;
+// axios.defaults.baseURL = import.meta.env.VITE_baseURL;
+
+axios.defaults.baseURL = 'http://localhost:4000';
+
 axios.defaults.withCredentials = true;
 
 function App() {

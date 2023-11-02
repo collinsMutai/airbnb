@@ -13,12 +13,14 @@ const LoginPage = () => {
 
   async function loginUser(ev) {
     ev.preventDefault();
+    // console.log(email, password);
     try {
       const { data } = await axios.post("/login", {
         email,
         password,
       });
-      setUser(data.user['name']);
+      console.log(data);
+      setUser(data.user);
      
       // localStorage.setItem("user info", data.user['name'])
       // localStorage.setItem("email", data.user['email'])

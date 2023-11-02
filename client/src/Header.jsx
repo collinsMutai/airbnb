@@ -87,7 +87,7 @@ const Header = () => {
           </svg>
         </div>
 
-        {!!user && <div>{user}</div>}
+        {!!user && <div>{user['name']}</div>}
       </Link>
     </header>
   );
