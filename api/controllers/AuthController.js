@@ -44,6 +44,7 @@ exports.login = async (req, res, next) => {
         process.env.JWT_KEY
       );
       cookies = token;
+
       return res
         .cookie("token", token)
         .status(200)
@@ -57,7 +58,7 @@ exports.login = async (req, res, next) => {
 
 exports.profile = (req, res, next) => {
   // const { token } = req.cookies
-  console.log(cookies);
+  // console.log(cookies);
   // res.json({token});
   if (cookies) {
     jwt.verify(cookies, process.env.JWT_KEY, {}, (err, user) => {
@@ -84,7 +85,7 @@ exports.places = async (req, res, next) => {
     checkOut,
     maxGuests,
   } = req.body;
-  const getUser = await User.findOne({_id: owner})
+  const getUser = await User.findOne({ _id: owner });
   // console.log(getUser, 'found user');
   const newPlace = new Place({
     owner: getUser._id,
@@ -100,4 +101,48 @@ exports.places = async (req, res, next) => {
   });
   const placeDoc = await newPlace.save();
   res.json(placeDoc);
+};
+
+exports.getPlaces = async (req, res, next) => {
+  const places = await Place.find({ owner: loggedUser._id });
+  res.json(places);
+};
+
+exports.getPlace = async (req, res, next) => {
+  const { action } = req.params;
+
+  const place = await Place.findById({ _id: action });
+  res.json(place);
+};
+
+exports.updatePlace = async (req, res, next) => {
+  const { action } = req.params;
+  const {
+    owner,
+    title,
+    address,
+    addedPhotos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  let getPlace = await Place.findOne({ _id: action });
+  // console.log(getUser, 'found user');
+
+  if (loggedUser._id.toString() === getPlace.owner.toString()) {
+    (getPlace.title = title),
+      (getPlace.address = address),
+      (getPlace.addedPhotos = addedPhotos),
+      (getPlace.description = description),
+      (getPlace.perks = perks),
+      (getPlace.extraInfo = extraInfo),
+      (getPlace.checkIn = checkIn),
+      (getPlace.checkOut = checkOut),
+      (getPlace.maxGuests = maxGuests);
+    await getPlace.save();
+    res.json(getPlace);
+  }
 };

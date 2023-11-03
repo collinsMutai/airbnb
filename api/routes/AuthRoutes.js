@@ -13,4 +13,10 @@ router.get('/profile', AuthController.profile)
 
 router.post('/places', AuthController.places)
 
+router.get('/places', AuthController.getPlaces)
+
+router.get('/places/:action', AuthController.getPlace)
+
+router.put('/places/:action', AuthController.updatePlace)
+
 module.exports = router;

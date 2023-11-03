@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { Link, Navigate, useParams } from "react-router-dom";
 import Perks from "../Perks";
@@ -7,13 +7,14 @@ import PhotosUploader from "../PhotosUploader";
 
 import { UserContext } from "../UserContext";
 
-
-
 const PlacesPage = () => {
   const { action } = useParams();
+  // console.log(action);
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
+
   const [photoLink, setPhotoLink] = useState("");
+
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
@@ -21,8 +22,34 @@ const PlacesPage = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
-  const [redirect, setRedirect] = useState("");
 
+  const [redirect, setRedirect] = useState("");
+  const [places, setPlaces] = useState([]);
+
+  useEffect(() => {
+    axios.get("/places").then(({ data }) => {
+      setPlaces(data);
+    });
+  }, []);
+
+  useEffect(()=>{
+    if(action === 'new' || action === undefined){
+      return 
+    }
+    axios.get('/places/'+action).then(res=>{
+      const {data} = res
+      // console.log(res);
+      setTitle(data.title)
+      setAddress(data.address)
+      setAddedPhotos(data.addedPhotos)
+      setDescription(data.description)
+      setPerks(data.perks)
+      setExtraInfo(data.extraInfo)
+      setCheckIn(data.checkIn)
+      setCheckOut(data.checkOut)
+      setMaxGuests(data.maxGuests)
+    })
+  },[action])
   function inputHeader(text) {
     return <h2 className="text-2xl mt-4">{text}</h2>;
   }
@@ -37,70 +64,106 @@ const PlacesPage = () => {
       </>
     );
   }
-  const { user, setUser} = useContext(UserContext);
-  console.log(user, 'places page');
-  async function addNewPlace(ev) {
+  const { user, setUser } = useContext(UserContext);
+  // console.log(user, 'places page');
+  async function savePlace(ev) {
     ev.preventDefault();
-    const { data } = await axios.post("/places", {
-      owner: user['_id'],
-      title,
-      address,
-      addedPhotos,
-      description,
-      perks,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-    });
-    setRedirect("/account/places");
+    
+    if (action !== "new" || action !== undefined) {
+       const { data } = await axios.put("/places/"+action, {
+         owner: user["_id"],
+         title,
+         address,
+         addedPhotos,
+         description,
+         perks,
+         extraInfo,
+         checkIn,
+         checkOut,
+         maxGuests,
+       });
+       setRedirect("/account/places");
+    } else {
+      const { data } = await axios.post("/places", {
+        owner: user["_id"],
+        title,
+        address,
+        addedPhotos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+      });
+      setRedirect("/account/places");
+    }
   }
 
   if (redirect) {
     return <Navigate to={redirect} />;
   }
- let { subpage } = useParams();
- if (subpage === undefined) {
-   subpage = "profile";
- }
- function linkClasses(type = null) {
-   let classes = "inline-flex gap-1 py-2 px-6 rounded-full";
-   if (type === subpage) {
-     classes += " bg-primary text-white";
-   } else {
-     classes += "bg-gray-200";
-   }
-   return classes;
- }
+  let { subpage } = useParams();
+  if (subpage === undefined) {
+    subpage = "profile";
+  }
+  function linkClasses(type = null) {
+    let classes = "inline-flex gap-1 py-2 px-6 rounded-full";
+    if (type === subpage) {
+      classes += " bg-primary text-white";
+    } else {
+      classes += "bg-gray-200";
+    }
+    return classes;
+  }
   return (
     <div>
-      {action !== "new" && (
-        <div className="text-center">
-          list of all added places
-          <br/>
-          <Link
-            className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
-            to={"/account/places/new"}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
+      {action == undefined && (
+        <>
+          <div className="text-center">
+            list of all added places
+            <br />
+            <Link
+              className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
+              to={"/account/places/new"}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add new place
-          </Link>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              Add new place
+            </Link>
+          </div>
+          <div className="mt-4">
+            {places.length > 0 &&
+              places.map((place) => (
+                <Link to={'/account/places/'+place._id} className="flex gap-4 cursor-pointer bg-gray-100 p-4 mb-4 rounded-2xl">
+                  <div className="flex bg-gray-300 w-32 h-32 grow-0 shrink">
+                    {place.addedPhotos.length > 0 && (
+                      <img className="object-cover" src={'http://localhost:4000/uploads/'+place.addedPhotos[0]} alt="" />
+                      
+                    )}
+                  </div>
+                  <div className="grow shrink-0">
+                    <h2 className="text-xl">{place.title}</h2>
+                    <p className="text-sm mt-2">{place.description}</p>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </>
       )}
-      {action === "new" && (
+      {(action === "new" || action !== undefined) && (
         <>
           <nav className="w-full flex justify-center mt-8 gap-2 mb-12">
             <Link className={linkClasses("profile")} to={"/account"}>
@@ -156,7 +219,7 @@ const PlacesPage = () => {
             </Link>
           </nav>
           <div>
-            <form onSubmit={addNewPlace}>
+            <form onSubmit={savePlace}>
               {preInput(
                 "Title",
                 "title for your place. should be short and catchy"
@@ -233,7 +296,6 @@ const PlacesPage = () => {
           </div>
         </>
       )}
-      
     </div>
   );
 };

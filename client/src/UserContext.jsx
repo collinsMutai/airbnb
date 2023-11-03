@@ -12,7 +12,7 @@ const UserContextProvider = ({ children }) => {
     if (!user) {
       axios.get('/profile').then(res => {
         console.log(res.data);
-        setUser(res.data.name)
+        setUser(res.data)
       })
     }
   },[])
