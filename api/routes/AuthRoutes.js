@@ -15,6 +15,8 @@ router.post('/places', AuthController.places)
 
 router.get('/places', AuthController.getPlaces)
 
+router.get('/user-places', AuthController.getUserPlaces)
+
 router.get('/places/:action', AuthController.getPlace)
 
 router.put('/places/:action', AuthController.updatePlace)

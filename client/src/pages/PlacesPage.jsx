@@ -22,12 +22,13 @@ const PlacesPage = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+  const [price, setPrice] = useState(100);
 
   const [redirect, setRedirect] = useState("");
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    axios.get("/places").then(({ data }) => {
+    axios.get("/user-places").then(({ data }) => {
       setPlaces(data);
     });
   }, []);
@@ -48,6 +49,7 @@ const PlacesPage = () => {
       setCheckIn(data.checkIn)
       setCheckOut(data.checkOut)
       setMaxGuests(data.maxGuests)
+      setPrice(data.price)
     })
   },[action])
   function inputHeader(text) {
@@ -81,6 +83,7 @@ const PlacesPage = () => {
          checkIn,
          checkOut,
          maxGuests,
+         price
        });
        setRedirect("/account/places");
     } else {
@@ -263,7 +266,7 @@ const PlacesPage = () => {
                 "Check in & out times",
                 "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam!"
               )}
-              <div className="grid gap-2 sm:grid-cols-3">
+              <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
                 <div>
                   <h3 className="mt-2 -mb-1">Check in time</h3>
                   <input
@@ -288,6 +291,14 @@ const PlacesPage = () => {
                     type="text"
                     value={maxGuests}
                     onChange={(ev) => setMaxGuests(ev.target.value)}
+                  />
+                </div>
+                <div>
+                  <h3 className="mt-2 -mb-1">Prices per night</h3>
+                  <input
+                    type="text"
+                    value={price}
+                    onChange={(ev) => setPrice(ev.target.value)}
                   />
                 </div>
               </div>
