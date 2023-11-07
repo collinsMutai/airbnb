@@ -33,25 +33,25 @@ const PlacesPage = () => {
     });
   }, []);
 
-  useEffect(()=>{
-    if(action === 'new' || action === undefined){
-      return 
+  useEffect(() => {
+    if (action === "new" || action === undefined) {
+      return;
     }
-    axios.get('/places/'+action).then(res=>{
-      const {data} = res
+    axios.get("/places/" + action).then((res) => {
+      const { data } = res;
       // console.log(res);
-      setTitle(data.title)
-      setAddress(data.address)
-      setAddedPhotos(data.addedPhotos)
-      setDescription(data.description)
-      setPerks(data.perks)
-      setExtraInfo(data.extraInfo)
-      setCheckIn(data.checkIn)
-      setCheckOut(data.checkOut)
-      setMaxGuests(data.maxGuests)
-      setPrice(data.price)
-    })
-  },[action])
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddedPhotos(data.addedPhotos);
+      setDescription(data.description);
+      setPerks(data.perks);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      setPrice(data.price);
+    });
+  }, [action]);
   function inputHeader(text) {
     return <h2 className="text-2xl mt-4">{text}</h2>;
   }
@@ -70,23 +70,8 @@ const PlacesPage = () => {
   // console.log(user, 'places page');
   async function savePlace(ev) {
     ev.preventDefault();
-    
-    if (action !== "new" || action !== undefined) {
-       const { data } = await axios.put("/places/"+action, {
-         owner: user["_id"],
-         title,
-         address,
-         addedPhotos,
-         description,
-         perks,
-         extraInfo,
-         checkIn,
-         checkOut,
-         maxGuests,
-         price
-       });
-       setRedirect("/account/places");
-    } else {
+
+ if(action === "new"){
       const { data } = await axios.post("/places", {
         owner: user["_id"],
         title,
@@ -98,6 +83,22 @@ const PlacesPage = () => {
         checkIn,
         checkOut,
         maxGuests,
+        price,
+      });
+      setRedirect("/account/places");
+    } else if  (action !== "new" || action !== undefined) {
+      const { data } = await axios.put("/places/" + action, {
+        owner: user["_id"],
+        title,
+        address,
+        addedPhotos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+        price,
       });
       setRedirect("/account/places");
     }
@@ -150,11 +151,20 @@ const PlacesPage = () => {
           <div className="mt-4">
             {places.length > 0 &&
               places.map((place) => (
-                <Link to={'/account/places/'+place._id} className="flex gap-4 cursor-pointer bg-gray-100 p-4 mb-4 rounded-2xl">
+                <Link
+                  to={"/account/places/" + place._id}
+                  className="flex gap-4 cursor-pointer bg-gray-100 p-4 mb-4 rounded-2xl"
+                >
                   <div className="flex bg-gray-300 w-32 h-32 grow-0 shrink">
                     {place.addedPhotos.length > 0 && (
-                      <img className="object-cover" src={'http://localhost:4000/uploads/'+place.addedPhotos[0]} alt="" />
-                      
+                      <img
+                        className="object-cover"
+                        src={
+                          "http://localhost:4000/uploads/" +
+                          place.addedPhotos[0]
+                        }
+                        alt=""
+                      />
                     )}
                   </div>
                   <div className="grow shrink-0">

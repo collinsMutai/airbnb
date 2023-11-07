@@ -3,18 +3,15 @@ import { Link } from "react-router-dom";
 import { UserContext } from "./UserContext";
 
 const Header = () => {
- 
-  const { user,setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   console.log(user);
 
   // let userName = localStorage.getItem("user info");
   // setUser(userName)
- 
-  
 
   return (
     <header className="flex justify-between">
-      <Link to={'/'} className="flex items-center gap-1">
+      <Link to={"/"} className="flex items-center gap-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -87,7 +84,7 @@ const Header = () => {
           </svg>
         </div>
 
-        {!!user && <div>{user['name']}</div>}
+        {!!user && <div>{user["name"]}</div>}
       </Link>
     </header>
   );

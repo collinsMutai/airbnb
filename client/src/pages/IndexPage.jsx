@@ -4,7 +4,8 @@ import axios from "axios";
 const IndexPage = () => {
   const [places, setPlaces] = useState([]);
   useEffect(() => {
-    axios.get("/places").then(({data} ) => {
+    axios.get("/places").then(({ data }) => {
+      console.log(data);
       setPlaces(data);
     });
   }, []);

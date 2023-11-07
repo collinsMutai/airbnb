@@ -72,7 +72,7 @@ exports.profile = (req, res, next) => {
 };
 
 exports.places = async (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
   const {
     owner,
     title,
@@ -84,7 +84,7 @@ exports.places = async (req, res, next) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   } = req.body;
   const getUser = await User.findOne({ _id: owner });
   // console.log(getUser, 'found user');
@@ -99,7 +99,7 @@ exports.places = async (req, res, next) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   });
   const placeDoc = await newPlace.save();
   res.json(placeDoc);
@@ -134,7 +134,7 @@ exports.updatePlace = async (req, res, next) => {
     checkIn,
     checkOut,
     maxGuests,
-    price
+    price,
   } = req.body;
   let getPlace = await Place.findOne({ _id: action });
   // console.log(getUser, 'found user');
@@ -149,7 +149,7 @@ exports.updatePlace = async (req, res, next) => {
       (getPlace.checkIn = checkIn),
       (getPlace.checkOut = checkOut),
       (getPlace.maxGuests = maxGuests);
-      getPlace.price = price
+    getPlace.price = price;
     await getPlace.save();
     res.json(getPlace);
   }

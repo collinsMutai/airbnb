@@ -9,16 +9,16 @@ router.post("/register", AuthController.register);
 
 router.post("/login", AuthController.login);
 
-router.get('/profile', AuthController.profile)
+router.get("/profile", AuthController.profile);
 
-router.post('/places', AuthController.places)
+router.post("/places", AuthController.places);
 
-router.get('/places', AuthController.getPlaces)
+router.get("/places", AuthController.getPlaces);
 
-router.get('/user-places', AuthController.getUserPlaces)
+router.get("/user-places", AuthController.getUserPlaces);
 
-router.get('/places/:action', AuthController.getPlace)
+router.get("/places/:action", AuthController.getPlace);
 
-router.put('/places/:action', AuthController.updatePlace)
+router.put("/places/:action", AuthController.updatePlace);
 
 module.exports = router;
