@@ -72,7 +72,7 @@ exports.profile = (req, res, next) => {
 };
 
 exports.places = async (req, res, next) => {
-  console.log(req.body);
+  console.log(req.body)
   const {
     owner,
     title,
