@@ -6,6 +6,7 @@ import Perks from "../Perks";
 import PhotosUploader from "../PhotosUploader";
 
 import { UserContext } from "../UserContext";
+import PlaceImg from "../PlaceImg";
 
 const PlacesPage = () => {
   const { action } = useParams();
@@ -151,11 +152,13 @@ const PlacesPage = () => {
           <div className="mt-4">
             {places.length > 0 &&
               places.map((place) => (
+                
                 <Link
                   to={"/account/places/" + place._id}
                   className="flex gap-4 cursor-pointer bg-gray-100 p-4 mb-4 rounded-2xl"
                 >
                   <div className="flex bg-gray-300 w-32 h-32 grow-0 shrink-0">
+                    {/* <PlaceImg place={place}/> */}
                     {place.addedPhotos.length > 0 && (
                       <img
                         className="object-cover"

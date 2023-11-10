@@ -4,7 +4,7 @@ import { UserContext } from "./UserContext";
 
 const Header = () => {
   const { user, setUser } = useContext(UserContext);
-  console.log(user);
+  // console.log(user);
 
   // let userName = localStorage.getItem("user info");
   // setUser(userName)

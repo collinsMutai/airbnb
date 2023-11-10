@@ -26,7 +26,7 @@ const AccountPage = () => {
   }
   const logout = () => {
     // let clear = localStorage.clear();
-    // setRedirect(true);
+    setRedirect(true);
     setUser(null);
     // return <Navigate to={"/"} />;
   };

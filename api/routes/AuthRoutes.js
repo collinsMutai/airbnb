@@ -21,4 +21,8 @@ router.get("/places/:action", AuthController.getPlace);
 
 router.put("/places/:action", AuthController.updatePlace);
 
+router.post("/bookings", AuthController.bookings)
+
+router.get("/bookings", AuthController.getBookings)
+
 module.exports = router;

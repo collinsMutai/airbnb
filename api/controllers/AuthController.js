@@ -1,11 +1,27 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/UserModel");
-const Place = require("../models/PlaceSchema");
+const User = require("../models/User");
+const Place = require("../models/Place");
+const Booking = require("../models/Booking");
 exports.test = (req, res, next) => {
   res.json("test ok");
 };
 let loggedUser = "";
+
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(
+      req.cookies.token,
+      process.env.JWT_KEY,
+      {},
+      async (err, user) => {
+        if (err) throw err;
+        resolve(user);
+      }
+    );
+  });
+}
+
 exports.register = async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -24,7 +40,7 @@ exports.register = async (req, res, next) => {
     res.status(422).json({ message: "User registration failed!" });
   }
 };
-let cookies = "";
+// let cookies = "";
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   console.log(email, password);
@@ -43,7 +59,7 @@ exports.login = async (req, res, next) => {
         { email: user.email, userId: user._id, name: user.name },
         process.env.JWT_KEY
       );
-      cookies = token;
+      // cookies = token;
 
       return res
         .cookie("token", token)
@@ -57,11 +73,11 @@ exports.login = async (req, res, next) => {
 };
 
 exports.profile = (req, res, next) => {
-  // const { token } = req.cookies
-  // console.log(cookies);
+  const { token } = req.cookies;
+  console.log(token);
   // res.json({token});
-  if (cookies) {
-    jwt.verify(cookies, process.env.JWT_KEY, {}, (err, user) => {
+  if (token) {
+    jwt.verify(token, process.env.JWT_KEY, {}, (err, user) => {
       if (err) throw err;
       res.json(user);
     });
@@ -72,7 +88,7 @@ exports.profile = (req, res, next) => {
 };
 
 exports.places = async (req, res, next) => {
-  console.log(req.body)
+  console.log(req.body);
   const {
     owner,
     title,
@@ -153,4 +169,32 @@ exports.updatePlace = async (req, res, next) => {
     await getPlace.save();
     res.json(getPlace);
   }
+};
+
+exports.bookings = async (req, res, next) => {
+  const userData = await getUserDataFromReq(req);
+  const { place, checkIn, checkOut, numberOfGuests, guestName, mobile, price } =
+    req.body;
+  console.log(req.body);
+  Booking.create({
+    place,
+    checkIn,
+    checkOut,
+    numberOfGuests,
+    guestName,
+    mobile,
+    price,
+    user: userData.userId,
+  })
+    .then((doc) => {
+      res.json(doc);
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
+
+exports.getBookings = async (req, res, next) => {
+  const userData = await getUserDataFromReq(req);
+  res.json(await Booking.find({ user: userData.userId }).populate('place'));
 };

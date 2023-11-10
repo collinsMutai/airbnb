@@ -11,7 +11,7 @@ const UserContextProvider = ({ children }) => {
   useEffect(() => {
     if (!user) {
       axios.get('/profile').then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setUser(res.data)
       })
     }
