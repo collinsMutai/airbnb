@@ -84,7 +84,7 @@ const BookingsPage = () => {
       <div>
         {bookings?.length > 0 &&
           bookings.map((booking) => (
-            <div
+            <Link to={`/account/bookings/${booking._id}`}
               className="flex gap-4 bg-gray-200 rounded-2xl overflow-hidden"
               key={booking._id}
             >
@@ -197,7 +197,7 @@ const BookingsPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
       </div>
     </div>
